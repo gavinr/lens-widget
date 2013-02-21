@@ -35,6 +35,11 @@ Find a bug or want to request a new feature?  Please let us know by submitting a
 
 Anyone and everyone is welcome to contribute. 
 
+## TODO
+
+* refactor Lens.js to properly use the Dijit lifecycle
+* convert to AMD
+
 ## Licensing
 Copyright 2013 Esri
 

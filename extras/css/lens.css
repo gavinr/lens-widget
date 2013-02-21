@@ -1,0 +1,66 @@
+﻿label {
+  font-size: 8pt;
+}
+
+#lensButton {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background-color:#444;
+  border: 4px solid #fff;
+  color:#fff;
+  cursor:pointer;
+  font-size:10pt;
+  font-family:verdana;
+  height:34px;
+  padding-left: 2px;
+  position:absolute;
+  right:10px;
+  top:10px;
+  width:80px;
+  z-index:5;
+} 
+
+#lensIcon {
+  vertical-align: middle;
+}
+
+#lensWin {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background-color: transparent;
+  border: 0px solid #444;
+  border-bottom: 10px solid #444;
+  display: none;
+  height: 290px;
+  left: 100px;
+  overflow: hidden;
+  position: absolute;
+  top: 50px;
+  width: 400px;
+  z-index: 10;
+} 
+
+#lensMap { height: 300px; }
+
+#dragHandle {
+  -webkit-border-radius: 10px 10px px px;
+  border-radius: 10px 10px px px;
+  background-color: #444;
+  border: 4px solid #444;
+  color: #fff;
+  cursor: move;
+  font-family:verdana;
+  text-align: left;
+}
+
+#lensSettings {
+  cursor: move;
+  font-family:verdana;
+  text-align: right;
+  padding: 0 2px 2px 200px;
+}
+
+#basemapCbx { color: #444; }
+
+#lensSettings label { cursor: move; }
+

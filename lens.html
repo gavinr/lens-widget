@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <title>lens window</title>
+
+    <!-- required ArcGIS API for JavaScript CSS -->
+    <link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.3/js/esri/css/esri.css">
+    <!-- lens widget requires a dijit theme -->
+    <link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.3/js/dojo/dijit/themes/tundra/tundra.css">
+    <!-- CSS for the Lens widget -->
+    <link rel="stylesheet" href="extras/css/lens.css">
+
+    <style>
+      html, body {
+          height: 100%;
+          width: 100%;
+          margin: 0; 
+          padding: 0;
+      }
+      
+      body {
+        background-color:#777;
+        overflow:hidden;  
+        font-family: "Trebuchet MS";
+      }
+
+      #bc {
+        width: 100%; 
+        height: 100%; 
+        margin: 0;
+      }
+      
+      #header {
+        background-color:#444;
+        color:yellow;
+        font-size:16pt;
+        text-align:center;
+        font-weight:bold;   
+      }
+      
+      #footer {
+        background-color:#444;
+        color:yellow;
+        font-size:10pt;
+        text-align:center;
+      }
+      #github {
+        position: absolute;
+        text-align: center;
+        width: 160px;
+        height: 40px;
+        padding: 4px;
+        left: 30px;
+        bottom: 30px;
+        background-color: #fff;
+        color: #666;
+        z-index: 30;
+      }
+      #github a, #github a:active, #github a:visited {
+        color: #777;
+      }
+    </style>
+
+    <script>
+      var dojoConfig = { 
+        parseOnLoad: true, 
+        packages: [{
+          "name": "extras",
+          "location": location.pathname.replace(/\/[^/]+$/, "") + "/extras"
+        }]
+      }
+    </script>
+    <script src="http://serverapi.arcgisonline.com/jsapi/arcgis/3.3/"></script>
+    <script>
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+      dojo.require("esri.map");
+      dojo.require("extras.Lens"); // lens dijit
+      
+      var map, lens;
+      function init(){
+        // var IE = dojo.isIE;
+        // alert("IE: " + IE);
+        map = new esri.Map("map", { 
+          basemap: "gray",
+          center: [-110.89, 39.3],
+          zoom: 6
+        });
+        
+        // array of objects with info about each layer that will be used by the lens
+        var lensLayers = [{
+          "name": "Streets", 
+          "url": "http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer", 
+          "type": "Tiled"
+        }, {
+          "name": "Topo",
+          "url": "http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer",
+          "type": "Tiled"
+        }, {
+          "name": "Delorme",
+          "url": "http://server.arcgisonline.com/ArcGIS/rest/services/Specialty/DeLorme_World_Base_Map/MapServer",
+          "type": "Tiled"
+        }, {
+          "name": "Satellite",
+          "url": "http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+          "type": "Tiled"
+        }];
+        dojo.connect(map, "onLoad", function(theMap){
+          // initialize the lens window
+          //*
+          lens = dijit.byId("lens");
+          lens.init(map, lensLayers);
+          // */
+        });
+      }
+      dojo.ready(init);
+    </script>
+  </head>
+
+  <body class="tundra">
+
+    <div id="bc"
+         data-dojo-type="dijit.layout.BorderContainer" 
+         data-dojo-props="design:'headline',gutters:false">
+
+      <div id="map"
+           data-dojo-type="dijit.layout.ContentPane"
+           data-dojo-props="region:'center'">
+        <div id="github" class="esriSimpleSlider">
+            Download source from <a href="https://github.com/swingley/lens_dijit">Github</a>.
+        </div> 
+      </div>
+
+    </div>
+    <div id="lens" 
+         data-dojo-type="extras.Lens">
+    </div>
+
+  </body>
+
+</html>

@@ -4,7 +4,7 @@ The lens widget is a draggable window within a web app that is used to display o
 
 ArcMap has overview/magnifier windows and there are similar tools available for Esri's other web APIs (flex and silverlight). [Cartifact Maps also has a cool lens widget on their site](http://maps.cartifact.com/lany/). Finally, there's also a lens type tool in the examples that are bundled with PolyMaps. This widget provides similar functionality for the ArcGIS API for JavaScript.
 
-The widget is created from a page that includes a JavaScript API map. The widget takes two arguments:
+The widget is created from a page that includes an ArcGIS API for JavaScript map. The widget takes two arguments:
 -a map (this is the base map sits under the lens)
 -an array of objects that contain information about each map service to be displayed in the lens 
 

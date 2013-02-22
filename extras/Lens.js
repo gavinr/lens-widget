@@ -41,49 +41,35 @@ dojo.declare("extras.Lens", [dijit._Widget, dijit._Templated], {
   layerNames: null,
   started: false,
 
-  constructor: function(){
-
-  },
-
-  buildRendering: function(){
-    this.inherited("buildRendering", arguments);
-    dojo.parser.parse(this.domNode);
+  constructor: function(params, srcRefNode){
+    this.layerNames = []; // create an array to keep track of our layer names
+    this.mainMap = params.map; // keep a reference to the page's primary map
+    
+    // add each layer name to an array that is a property of this widget 
+    // also create a layer from each url as a property of this dijit
+    // ternary operator is used to decide between tiled or dynamic map services
+    // notice 3rd arg passed to forEach, it is the scope for the for loop
+    dojo.forEach(params.layers, function(lyr, i) {
+      (lyr.type == "Tiled") ? 
+        this[lyr.name] = new esri.layers.ArcGISTiledMapServiceLayer(lyr.url, { "id": lyr.name }) : 
+        this[lyr.name] = new esri.layers.ArcGISDynamicMapServiceLayer(lyr.url, { "id": lyr.name });
+      this.layerNames[i] = lyr.name;
+    }, this);
   },
 
   startup: function(){
     esri.config.defaults.map.panDuration = 0;
     esri.config.defaults.map.zoomDuration = 0;
-    this.started = true;
-  },
 
-  init: function(map, layers){
-    dojo.attr('lensMap', "style", {height: "240px"}); // resize the map
-    this.layerNames = []; // create an array to keep track of our layer names
-    this.mainMap = map; // keep a reference to the page's primary map
-    var ext = this.mainMap.extent;
-    
-    // add each layer name to an array that is a property of this dijit
-    // also create a layer from each url as a property of this dijit
-    // ternary operator is used to decide between tiled or dynamic map services
-    // notice 3rd arg passed to forEach, it is the scope for the for loop
-    dojo.forEach(layers, function(lyr, i) {
-      (lyr.type == 'Tiled') ? 
-        this[lyr.name] = new esri.layers.ArcGISTiledMapServiceLayer(lyr.url, { 'id': lyr.name }) : 
-        this[lyr.name] = new esri.layers.ArcGISDynamicMapServiceLayer(lyr.url, { 'id': lyr.name });
-      this.layerNames[i] = lyr.name;
-    }, this);
-
-    // var initialExtent = new esri.geometry.Extent(dojo.toJson(this.mainMap.extent.toJson()));
     var center = (function() { var c = esri.geometry.webMercatorToGeographic(map.extent.getCenter()); return [parseFloat(c.x.toFixed(3)), parseFloat(c.y.toFixed(3))];}());
     // use the ID of the div in the lens window to create the lens map
-    this.lensMap = new esri.Map('lensMap', { 
+    this.lensMap = new esri.Map("lensMap", { 
       center: center,
       zoom: this.mainMap.getLevel(),
-      nav: false, 
       slider: false 
     });
     dojo.connect(this.lensMap, "onLoad", function(m) {
-      dojo.attr(dojo.byId('lensMap'), "style", {height: "262px"}); 
+      dojo.attr(dojo.byId("lensMap"), "style", {height: "262px"}); 
       m.disableMapNavigation();
     }); 
 
@@ -134,8 +120,10 @@ dojo.declare("extras.Lens", [dijit._Widget, dijit._Templated], {
     // set up listeners to keep the mini map synced with the main map
     dojo.connect(this.draggableWin, "onMove", dojo.hitch(this, this.syncLensExtent));
     dojo.connect(this.mainMap, "onExtentChange", dojo.hitch(this, this.syncLensExtent));
-    dojo.connect(dijit.byId('lens.lensMapService'), "onChange", dojo.hitch(this, this.lensMapChange));
-    dojo.connect(dijit.byId('lensMapOpacity'), "onChange", dojo.hitch(this, this.changeOpacity));
+    dojo.connect(dijit.byId("lens.lensMapService"), "onChange", dojo.hitch(this, this.lensMapChange));
+    dojo.connect(dijit.byId("lensMapOpacity"), "onChange", dojo.hitch(this, this.changeOpacity));
+    
+    this.started = true;
   },
 
   syncLensExtent: function() {
@@ -152,9 +140,9 @@ dojo.declare("extras.Lens", [dijit._Widget, dijit._Templated], {
       dragHandleHeight = dragHandleHeight + 1;
       bb.l = bb.l - 1;
     }
+    // IE needs some special attention as well
     if ( dojo.isIE ) {
       dragHandleHeight = dragHandleHeight - 4;
-      // alert("IE");
     }
 
     // create new extent for the lens map

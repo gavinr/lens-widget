@@ -108,11 +108,11 @@
           "type": "Tiled"
         }];
         dojo.connect(map, "onLoad", function(theMap){
-          // initialize the lens window
-          //*
-          lens = dijit.byId("lens");
-          lens.init(map, lensLayers);
-          // */
+          // create an element for the lens widget
+          var lensNode = dojo.create("div", { id: "lens"}, dojo.body());
+          // create the lens widget
+          lens = new extras.Lens({ map: map, layers: lensLayers}, lensNode);
+          lens.startup();
         });
       }
       dojo.ready(init);
@@ -133,9 +133,6 @@
         </div> 
       </div>
 
-    </div>
-    <div id="lens" 
-         data-dojo-type="extras.Lens">
     </div>
 
   </body>

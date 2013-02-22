@@ -39,8 +39,12 @@ Anyone and everyone is welcome to contribute.
 
 ## TODO
 
-* refactor Lens.js to properly use the Dijit lifecycle
+* move template string to separate .html file
+* use data-dojo-attach-point in template and get rid of dijit.byId calls
 * convert to AMD
+* check that the lens map service SR matches the map's SR
+* check for map.loaded within the widget so it's not necessary to connect map.onLoad to use the widget
+
 
 ## Licensing
 Copyright 2013 Esri

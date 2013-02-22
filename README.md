@@ -14,9 +14,9 @@ The lens widget works with both tiled and dynamic map services. For performance 
 
 ## Instructions
 
-1. Fork and then clone the repo (preferably to a directory accessible to a web server). 
-2. load lens-widget/index.html in a browser
-3. click the "Lens" button in the upper right corner of the page
+1. Fork and then clone the repo (preferably to a directory accessible to a web server)
+2. Load lens-widget/index.html in a browser
+3. Click the "Lens" button in the upper right corner of the page
 
 ## Requirements
 

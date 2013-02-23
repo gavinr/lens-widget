@@ -61,12 +61,15 @@ dojo.declare("extras.Lens", [dijit._Widget, dijit._Templated], {
     esri.config.defaults.map.panDuration = 0;
     esri.config.defaults.map.zoomDuration = 0;
 
+    var map = this.mainMap;
     var center = (function() { var c = esri.geometry.webMercatorToGeographic(map.extent.getCenter()); return [parseFloat(c.x.toFixed(3)), parseFloat(c.y.toFixed(3))];}());
     // use the ID of the div in the lens window to create the lens map
     this.lensMap = new esri.Map("lensMap", { 
       center: center,
       zoom: this.mainMap.getLevel(),
-      slider: false 
+      slider: false,
+      showAttribution: false,
+      logo: false
     });
     dojo.connect(this.lensMap, "onLoad", function(m) {
       dojo.attr(dojo.byId("lensMap"), "style", {height: "262px"}); 

@@ -77,12 +77,15 @@
       var map, lensWidget;
 
       require([
+        "dojo/_base/connect",
+        "dojo/_base/window",
+        "dojo/dom-construct",
         "extras/Lens",
         "dojo/ready",
         "dijit/layout/BorderContainer",
         "dijit/layout/ContentPane",
         "esri/map"
-      ], function(Lens, ready) {
+      ], function(connect, win, domConstruct, Lens, ready) {
         ready(function() {
           map = new esri.Map("map", { 
             basemap: "gray",
@@ -108,15 +111,12 @@
             "url": "http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
             "type": "Tiled"
           }];
-          dojo.connect(map, "onLoad", function(theMap){
+          connect.connect(map, "onLoad", function(theMap){
             // create an element for the lens widget
-            var lensNode = dojo.create("div", { id: "lensWidget"}, dojo.body());
-            // console.log("created lens node", map, lensLayers, lensNode);
+            var lensNode = domConstruct.create("div", { id: "lensWidget"}, win.body());
             // create the lens widget
             lensWidget = new Lens({ map: map, layers: lensLayers}, lensNode);
-            // console.log("created lens");
             lensWidget.startup();
-            // console.log("called startup");
           });  
         });
       });

@@ -13,38 +13,16 @@
     <link rel="stylesheet" href="extras/css/lens.css">
 
     <style>
-      html, body {
-          height: 100%;
-          width: 100%;
-          margin: 0; 
-          padding: 0;
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+        margin: 0; 
+        padding: 0;
       }
-      
       body {
         background-color:#777;
         overflow:hidden;  
         font-family: "Trebuchet MS";
-      }
-
-      #bc {
-        width: 100%; 
-        height: 100%; 
-        margin: 0;
-      }
-      
-      #header {
-        background-color:#444;
-        color:yellow;
-        font-size:16pt;
-        text-align:center;
-        font-weight:bold;   
-      }
-      
-      #footer {
-        background-color:#444;
-        color:yellow;
-        font-size:10pt;
-        text-align:center;
       }
       #github {
         position: absolute;
@@ -65,7 +43,6 @@
 
     <script>
       var dojoConfig = { 
-        parseOnLoad: true, 
         packages: [{
           "name": "extras",
           "location": location.pathname.replace(/\/[^/]+$/, "") + "/extras"
@@ -82,8 +59,6 @@
         "dojo/dom-construct",
         "extras/Lens",
         "dojo/ready",
-        "dijit/layout/BorderContainer",
-        "dijit/layout/ContentPane",
         "esri/map"
       ], function(connect, win, domConstruct, Lens, ready) {
         ready(function() {
@@ -123,22 +98,12 @@
     </script>
   </head>
 
-  <body class="tundra">
-
-    <div id="bc"
-         data-dojo-type="dijit.layout.BorderContainer" 
-         data-dojo-props="design:'headline',gutters:false">
-
-      <div id="map"
-           data-dojo-type="dijit.layout.ContentPane"
-           data-dojo-props="region:'center'">
-        <div id="github" class="esriSimpleSlider">
-            Download source from <a href="https://github.com/swingley/lens-widget">Github</a>.
-        </div> 
-      </div>
-
+  <body>
+    <div id="map">
+      <div id="github" class="esriSimpleSlider">
+        Download source from <a href="https://github.com/swingley/lens-widget">Github</a>.
+      </div> 
     </div>
-
   </body>
 
 </html>

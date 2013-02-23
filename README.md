@@ -39,11 +39,9 @@ Anyone and everyone is welcome to contribute.
 
 ## TODO
 
-* move template string to separate .html file
-* use data-dojo-attach-point in template and get rid of dijit.byId calls
-* convert to AMD
 * check that the lens map service SR matches the map's SR
 * check for map.loaded within the widget so it's not necessary to connect map.onLoad to use the widget
+* programmatically create opacity slider
 
 
 ## Licensing

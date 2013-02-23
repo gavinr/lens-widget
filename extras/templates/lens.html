@@ -1,0 +1,26 @@
+<div>
+  <div data-dojo-attach-point="lensButton" id="lensButton"> 
+    <img data-dojo-attach-point="lensIcon" id="lensIcon" src="extras/images/zoom-32x32.png"/>Lens
+  </div> 
+  <div data-dojo-attach-point="lensWin" id="lensWin"> 
+    <div data-dojo-attach-point="dragHandle" id="dragHandle"> 
+      <span id="lensSettings"> 
+        <label for="${id}.lensMapService">Map Service: </label>
+        <input data-dojo-attach-point="lensMapService" id="${id}.lensMapService" /> 
+      </span>
+    </div>
+    <div data-dojo-attach-point="lensMapNode" id="lensMapNode">
+      <div style="position:absolute; left:10px; bottom:10px; z-Index:999;">
+        <div id="lensMapOpacity" 
+             data-dojo-type="dijit/form/HorizontalSlider" 
+             data-dojo-props="showButtons:true, value:0, minimum:0, maximum:10, discreteValues:11, intermediateChanges:true" 
+             style="width:200px;">
+          <div data-dojo-type="dijit/form/HorizontalRuleLabels" 
+               data-dojo-props="container:'topDecoration', labels:' '" 
+               style="position:relative; top:-1px; height:1.2em; font-size:80%; color:white; font-weight:bold;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

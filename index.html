@@ -74,53 +74,52 @@
     </script>
     <script src="http://serverapi.arcgisonline.com/jsapi/arcgis/3.3/"></script>
     <script>
-      dojo.require("dijit.layout.BorderContainer");
-      dojo.require("dijit.layout.ContentPane");
-      dojo.require("esri.map");
-      dojo.require("extras.Lens"); // lens dijit
-      
       var map, lensWidget;
-      function init(){
-        // var IE = dojo.isIE;
-        // alert("IE: " + IE);
-        map = new esri.Map("map", { 
-          basemap: "gray",
-          center: [-110.89, 39.3],
-          zoom: 6
+
+      require([
+        "extras/Lens",
+        "dojo/ready",
+        "dijit/layout/BorderContainer",
+        "dijit/layout/ContentPane",
+        "esri/map"
+      ], function(Lens, ready) {
+        ready(function() {
+          map = new esri.Map("map", { 
+            basemap: "gray",
+            center: [-110.89, 39.3],
+            zoom: 6
+          });
+          
+          // array of objects with info about each layer that will be used by the lens
+          var lensLayers = [{
+            "name": "Streets", 
+            "url": "http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer", 
+            "type": "Tiled"
+          }, {
+            "name": "Topo",
+            "url": "http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer",
+            "type": "Tiled"
+          }, {
+            "name": "Delorme",
+            "url": "http://server.arcgisonline.com/ArcGIS/rest/services/Specialty/DeLorme_World_Base_Map/MapServer",
+            "type": "Tiled"
+          }, {
+            "name": "Satellite",
+            "url": "http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+            "type": "Tiled"
+          }];
+          dojo.connect(map, "onLoad", function(theMap){
+            // create an element for the lens widget
+            var lensNode = dojo.create("div", { id: "lensWidget"}, dojo.body());
+            // console.log("created lens node", map, lensLayers, lensNode);
+            // create the lens widget
+            lensWidget = new Lens({ map: map, layers: lensLayers}, lensNode);
+            // console.log("created lens");
+            lensWidget.startup();
+            // console.log("called startup");
+          });  
         });
-        
-        // array of objects with info about each layer that will be used by the lens
-        var lensLayers = [{
-          "name": "Streets", 
-          "url": "http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer", 
-          "type": "Tiled"
-        }, {
-          "name": "Topo",
-          "url": "http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer",
-          "type": "Tiled"
-        }, {
-          "name": "Delorme",
-          "url": "http://server.arcgisonline.com/ArcGIS/rest/services/Specialty/DeLorme_World_Base_Map/MapServer",
-          "type": "Tiled"
-        }, {
-          "name": "Satellite",
-          "url": "http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
-          "type": "Tiled"
-        }];
-        console.log("created map");
-        dojo.connect(map, "onLoad", function(theMap){
-          // create an element for the lens widget
-          console.log("map loaded");
-          var lensNode = dojo.create("div", { id: "lens"}, dojo.body());
-          console.log("created lens node", map, lensLayers, lensNode);
-          // create the lens widget
-          lensWidget = new extras.Lens({ map: map, layers: lensLayers}, lensNode);
-          console.log("created lens");
-          lensWidget.startup();
-          console.log("called startup");
-        });
-      }
-      dojo.ready(init);
+      });
     </script>
   </head>
 

@@ -39,6 +39,10 @@ Anyone and everyone is welcome to contribute.
 
 ## TODO
 
+* ~~properly use the dijit lifecycle~~
+* ~~convert to AMD~~
+* ~~move widget template to its own .html file~~
+* ~~use attach points in the template instead of querying the DOM~~
 * check that the lens map service SR matches the map's SR
 * check for map.loaded within the widget so it's not necessary to connect map.onLoad to use the widget
 * programmatically create opacity slider

@@ -1,11 +1,11 @@
 define([
-  "dojo/_base/declare", 
-  "dojo/_base/array", 
-  "dojo/_base/connect", 
+  "dojo/_base/declare",
+  "dojo/_base/array",
+  "dojo/_base/connect",
   "dojo/_base/html",
   "dojo/_base/lang",
 
-  "dojo/sniff", 
+  "dojo/sniff",
   "dojo/has",
   "dojo/dnd/move",
   "dojo/data/ItemFileReadStore",
@@ -14,7 +14,7 @@ define([
   "dojo/dom-attr",
   "dojo/dom-style",
 
-  "dijit/_WidgetBase", 
+  "dijit/_WidgetBase",
   "dijit/_TemplatedMixin",
   "dijit/_WidgetsInTemplateMixin",
 
@@ -31,8 +31,8 @@ define([
   "esri/map",
   "esri/layers/agstiled"
 ], function(
-  declare, array, connect, html, lang, 
-  sniff, has, move, ItemFileReadStore, 
+  declare, array, connect, html, lang,
+  sniff, has, move, ItemFileReadStore,
   dom, domAttr, domStyle,
   WidgetBase, TemplatedMixin, WidgetsInTemplateMixin,
   registry, ComboBox, HorizontalSlider, HorizontalRuleLabels, FilteringSelect,
@@ -40,7 +40,7 @@ define([
   template
 ) {
   var LENS = declare([WidgetBase, TemplatedMixin, WidgetsInTemplateMixin], {
-    
+
     templateString: template,
 
     lensMap: null,
@@ -52,18 +52,19 @@ define([
     iconX: null,
     iconCurrent: null,
     iconSurface: null,
+    currentZoom: 1,
 
     constructor: function(params, srcNodeRef){
       this.layerNames = []; // create an array to keep track of our layer names
       this.mainMap = params.map; // keep a reference to the page's primary map
-      
-      // add each layer name to an array that is a property of this widget 
+
+      // add each layer name to an array that is a property of this widget
       // also create a layer from each url as a property of this dijit
       // ternary operator is used to decide between tiled or dynamic map services
       // notice 3rd arg passed to forEach, it is the scope for the for loop
       array.forEach(params.layers, function(lyr, i) {
-        (lyr.type === "Tiled") ? 
-          this[lyr.name] = new esri.layers.ArcGISTiledMapServiceLayer(lyr.url, { "id": lyr.name }) : 
+        (lyr.type === "Tiled") ?
+          this[lyr.name] = new esri.layers.ArcGISTiledMapServiceLayer(lyr.url, { "id": lyr.name }) :
           this[lyr.name] = new esri.layers.ArcGISDynamicMapServiceLayer(lyr.url, { "id": lyr.name });
         this.layerNames[i] = lyr.name;
       }, this);
@@ -90,9 +91,9 @@ define([
 
       var map = this.mainMap;
       var center = (function() { var c = esri.geometry.webMercatorToGeographic(map.extent.getCenter()); return [parseFloat(c.x.toFixed(3)), parseFloat(c.y.toFixed(3))];}());
-      // use the attach point in the template to get 
+      // use the attach point in the template to get
       // the node to turn into the lens map
-      this.lensMap = new esri.Map(this.lensMapNode, { 
+      this.lensMap = new esri.Map(this.lensMapNode, {
         center: center,
         zoom: this.mainMap.getLevel(),
         slider: false,
@@ -101,9 +102,9 @@ define([
       });
       connect.connect(this.lensMap, "onLoad", lang.hitch(this, function() {
         this.lensMap.disableMapNavigation();
-      })); 
+      }));
 
-      // add first layer that was passed in in the layers obj. 
+      // add first layer that was passed in in the layers obj.
       // so the lens displays something when it's opened
       this.lensMap.addLayer(this[this.layerNames[0]]);
 
@@ -112,14 +113,14 @@ define([
       array.forEach(this.layerNames, function(lyrName) {
         lensOptions.items.push({"name": lyrName});
       });
-      
+
       var lensMapServiceOptions = new ItemFileReadStore({ data: lensOptions });
       this.lensMapServiceFS = new FilteringSelect({
         displayedValue: this.layerNames[0],
         value: this.layerNames[0],
-        // name: "lensMapServiceFS", 
+        // name: "lensMapServiceFS",
         required: false,
-        store: lensMapServiceOptions, 
+        store: lensMapServiceOptions,
         searchAttr: "name",
         style: {"width": "100px", "fontSize": "8pt", "color": "#444"}
       }, this.lensMapService);
@@ -137,7 +138,7 @@ define([
         var b = {};
         b.t = 0;
         b.l = 0;
-        b.w = coords.l + coords.w;  
+        b.w = coords.l + coords.w;
         b.h = coords.h + coords.t + 20; // allow the bottom of the window to go 20px outside the viewport
         return b;
       };
@@ -152,9 +153,9 @@ define([
       connect.connect(this.draggableWin, "onMove", lang.hitch(this, this.syncLensExtent));
       connect.connect(this.mainMap, "onExtentChange", lang.hitch(this, this.syncLensExtent));
       connect.connect(this.lensMapServiceFS, "onChange", lang.hitch(this, this.lensMapChange));
-      connect.connect(registry.byId("lensMapOpacity"), "onChange", lang.hitch(this, this.changeOpacity));
+      connect.connect(registry.byId("lensMapOpacity"), "onChange", lang.hitch(this, this.changeZoom));
       connect.connect(this.lensButton, "onclick", lang.hitch(this, this.toggleLens));
-      
+
       this.started = true;
     },
 
@@ -185,8 +186,9 @@ define([
       // add dragHandle height to the y coordinate to account for the drag-handle div
       var ur = this.mainMap.toMap(new esri.geometry.Point(bb.l + bb.w, bb.t + dragHandleHeight, this.mainMap.spatialReference));
       var newExtent = new esri.geometry.Extent(ll.x, ll.y, ur.x, ur.y, this.mainMap.spatialReference);
-      this.lensMap.setExtent(newExtent);
-    },  
+      var expandFactor = 1/this.currentZoom;
+      this.lensMap.setExtent(newExtent.expand(expandFactor));
+    },
 
     lensMapChange: function(newMapService) {
       // figure out the opacity so we can apply it to the new layer
@@ -201,32 +203,29 @@ define([
         //alert('Unable to add ' + newMapService + ' because it\'s spatial reference does not match the underlying map. \nPlease select a different layer.');
       //}
     },
-    
-    changeOpacity: function(op){
-      var newOp = (op / 10);
-      // there is only ever one layer in the lens map so 
-      // using getLayer('layer0') should always work
-      this.lensMap.getLayer(this.lensMapServiceFS.value).setOpacity(1.0 - newOp);
+
+    changeZoom: function(level) {
+      this.currentZoom = level;
+      this.syncLensExtent();
     },
-    
     toggleLens: function() {
       //toggle the lens button icon
       this.iconSurface.clear();
       if ( this.iconCurrent === "magnifier" ) {
         this.iconSurface.createPath(this.iconX).setFill("#666");
         this.iconCurrent = "x";
-      } else { 
+      } else {
         this.iconSurface.createPath(this.iconMagnifier).setFill("#666");
         this.iconCurrent = "magnifier";
       }
-      
+
       //toggle the lens window
       // var lensWin = dom.byId("lensWin");
       if ( this.lensWin.style.display == "" || this.lensWin.style.display == "none" ) {
-        domStyle.set(this.lensWin, "display", "block");  
-        this.syncLensExtent(); 
-      } else { 
-        domStyle.set(this.lensWin, "display", "none"); 
+        domStyle.set(this.lensWin, "display", "block");
+        this.syncLensExtent();
+      } else {
+        domStyle.set(this.lensWin, "display", "none");
       }
     }
 
